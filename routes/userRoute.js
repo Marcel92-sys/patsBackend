@@ -1,7 +1,8 @@
 const express = require ('express');
-const Pat_Users = require('../models/user');
-const { generateAccessToken, registerUser, signInUser, buyCourse } = require('../controllers/user');
+const {  registerUser,  listUsers, readuser, userById} = require('../controllers/userCtrl');
 const Courses = require('../models/course');
+const { buyCourse, courseById } = require('../controllers/courseCtrl');
+const { signIn, requireSignin, hasAuthorization } = require('../controllers/authCtrl');
 
 const userRouter = express.Router();
 
@@ -9,36 +10,18 @@ const userRouter = express.Router();
 userRouter.post('/register', registerUser)
 
 
-userRouter.post('/login', signInUser )
+userRouter.post('/login',  signIn)
 
-userRouter.get('/', async(req,res) => {
-    const users = await Pat_Users.find()
-    // ensure to remove the password before hosting
+userRouter.get('/', listUsers)
 
-    res.send(users)
+userRouter.route('/:userId')
+        .get(requireSignin,readuser)
+        .put(requireSignin, hasAuthorization,)
+        .delete(requireSignin, hasAuthorization,)
 
-})
+userRouter.patch('/:userId/courses/:courseId', buyCourse)
 
+userRouter.param('userId', userById)
 
-
-
-
-
-
-userRouter.get('/:id', (req,res) => {
-    
-})
-
-
-userRouter.patch('/:id', (req,res) => {
-    
-})
-
-userRouter.patch('/:id/course/:courseId', buyCourse)
-
-// delete account
-userRouter.delete('/:id', (req,res) => {
-    
-})
-
+userRouter.param('courseId',  courseById)
 module.exports = userRouter

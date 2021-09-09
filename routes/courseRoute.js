@@ -1,43 +1,46 @@
-const express = require ('express')
+const express = require ('express');
+const { createCourse, deleteCourse, modifyCourse, getPhoto, readCourse, courseById, getCourses } = require('../controllers/courseCtrl');
 const Courses = require ('../models/course')
 
 const courseRouter = express.Router();
 
-courseRouter.get('/', async(req,res) => {
-    try {
-        
-        const courses = await Courses.find({});
-        console.log(courses)
-        res.status(200).send(courses)
-        
-    } catch (error) {
-        console.log(error.message)
-        res.status(400).send(error)
-    }
-})
+courseRouter.get('/', getCourses)
+
+// create a course
+// courseRouter.post('/:courseId/', createCourse )
+
+// testing route from frontend
+courseRouter.post('/', createCourse )
+
+courseRouter.get('/photo/:courseId', getPhoto )
 
 
-courseRouter.get('/courses/:id', (req, res) => {
-    const id = req.params.id;
+// edit a course
+courseRouter.patch('/:courseId/modify', modifyCourse )
 
-    const course = Courses.findById(id);
-    console.log(course)
+
+// remove a course entirely
+courseRouter.delete('/:courseId', deleteCourse)
+
+
+
+
+
+courseRouter.get('/:courseId', readCourse)
+
+
+
+
+courseRouter.put('/:courseId', (req, res) => {
     
 })
 
 
-courseRouter.patch('/courses/:id', (req, res) => {
+courseRouter.delete('/:courseId', (req, res) => {
     
 })
 
-
-courseRouter.put('/courses/:id', (req, res) => {
-    
-})
-
-
-courseRouter.delete('/courses/:id', (req, res) => {
-    
-})
+// any route with :courseId, use the courseById middleware
+courseRouter.param('courseId', courseById)
 
 module.exports = courseRouter
